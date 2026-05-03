@@ -146,10 +146,38 @@ def show_details(request):
     })
 
 @csrf_exempt
-@require_http_methods(["DELETE"])
-def delete_details(request, id):
+@require_http_methods(["PUT", "DELETE"])
+def del_upd_details_by_id(request, id):
     try:
         response = Response_table.objects.get(id=id)
+
+    except Response_table.DoesNotExist:
+        return JsonResponse({
+            "status": "error",
+            "message": "Record not found"
+        }, status=404)
+
+    # UPDATE
+    if request.method == "PUT":
+        try:
+            data = json.loads(request.body)
+
+            response.metadata = data
+            response.save()
+
+            return JsonResponse({
+                "status": "success",
+                "message": "Updated successfully"
+            })
+
+        except json.JSONDecodeError:
+            return JsonResponse({
+                "status": "error",
+                "message": "Invalid JSON"
+            }, status=400)
+
+    # DELETE
+    elif request.method == "DELETE":
         response.delete()
 
         return JsonResponse({
@@ -157,36 +185,10 @@ def delete_details(request, id):
             "message": "Deleted successfully"
         })
 
-    except Response_table.DoesNotExist:
-        return JsonResponse({
-            "status": "error",
-            "message": "Record not found"
-        }, status=404)
-
-@csrf_exempt
-@require_http_methods(["PUT"])
-def update_details(request, id):
-    if request.method != "PUT":
-        return JsonResponse({"error": "Only PUT allowed"}, status=405)
-
-    try:
-        response = Response_table.objects.get(id=id)
-        data = json.loads(request.body)
-
-        response.metadata = data
-        response.save()
-
-        return JsonResponse({
-            "status": "success",
-            "message": "Updated successfully"
-        })
-
-    except Response_table.DoesNotExist:
-        return JsonResponse({
-            "status": "error",
-            "message": "Record not found"
-        }, status=404)
-
+    return JsonResponse({
+        "status": "error",
+        "message": "Method not allowed"
+    }, status=405)
 
 # Student details and fee details views from KOBO data forms
 @csrf_exempt
@@ -248,6 +250,7 @@ def display_student_details(request):
     datas = list(stud_info.values())
 
     return JsonResponse({
+        "keyDisp": ["Student_id", "Name", "Faculty"],
         "keys": ["Student_id", "Name", "Contact", "Date_of_Birth", "Faculty", "Address"],
         "student_details": datas
     })
@@ -266,6 +269,7 @@ def display_fee_details(request):
         })
 
     return JsonResponse({
+        "keyDisp": ["student","Fee_amount", "Paid_amount"],
         "keys": ["student", "Semester", "Fee_amount", "Paid_amount"],
         "fee_details": dataf
     })

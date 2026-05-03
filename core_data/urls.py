@@ -7,8 +7,7 @@ urlpatterns = [
     # path('api/webhook/', views.kobo_webhook),
     path('api/details/', views.show_details),
     path('api/create/', views.create_data),
-    # path('api/details/<int:id>/', views.delete_details),
-    path("api/details/<int:id>/", views.update_details),
+    path('api/details/<int:id>/', views.del_upd_details_by_id),  # renamed to del_upd_details_by_id for clarity
 
     path('api/fee_details/', views.show_fee_details),                     # this is actually create fee details, but named show_fee_details for consistency with student details
     path('api/fee_details/display/', views.display_fee_details),           # this actually show details, but named create_fee_details for consistency with student details
