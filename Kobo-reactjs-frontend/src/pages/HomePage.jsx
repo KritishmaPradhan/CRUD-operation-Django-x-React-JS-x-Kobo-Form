@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import axios from "axios";
 import DisplayTableKoboStu from "../components/KoboFormStuDetail";
 import FacultyChart from "../components/FacultyChart";
@@ -11,6 +11,7 @@ function HomePage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [facultyChartData, setFacultyChartData] = useState([]);
+  const [index, setIndex] = useState(0);
 
   const handleSearch = async (e) => {
     e.preventDefault();
@@ -74,9 +75,23 @@ function HomePage() {
     setFacultyChartData(chartData);
   }, []);
 
+  const messages = [
+    "Welcome to the Student Records Portal!",
+    "Easily search for student details and fee information.",
+    "Browse all student records and fee details with a click.",
+    "Visualize faculty distribution with our interactive chart.",
+  ];
+  useEffect(() => {
+      const interval = setInterval(() => {
+        setIndex((prev) => (prev + 1) % messages.length);
+      }, 1000);
+      return () => clearInterval(interval);
+  }, []);
+
   return (
     <div className="home-container">
       {/* Hero Search Section */}
+      <p className="dynamic-text">{messages[index]}</p>
       <div className="search-hero">
         <div className="search-content">
           <h1 className="search-title">Find Student Records</h1>

@@ -25,7 +25,18 @@ html, body {
   background: linear-gradient(135deg, #0f172a 0%, #1a1f3a 100%);
   padding: 40px 20px;
 }
-
+.dynamic-text{
+  text-align: center;
+  font-size: 30px;
+  background: linear-gradient(135deg, #4ab5fd 0%, #b50783 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 20px;
+  font-weight: 500;
+  font-family: Georgia, 'Times New Roman', Times, serif;
+  animation: fadeInOut 4s ease-in-out infinite;
+  text-shadow:  0 0 5px rgba(1, 6, 9, 0.5)
+}
 /* Hero Search Section */
 .search-hero {
   max-width: 900px;

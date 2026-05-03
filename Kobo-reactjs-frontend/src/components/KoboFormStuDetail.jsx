@@ -5,14 +5,22 @@ import "./KoboFormStuDetail.css";
 function DisplayTableKoboStu({ apiUrl, dataKey, title, onDataLoad }) {
   const [data, setData] = useState([]);
   const [keys, setKeys] = useState([]);
+  const [keyDisp, setKeysDisp] = useState([]);
+  const [list_item, setListItem] = useState(null);
+
+  const showDetails = (item) => {
+    console.log("Row data:", item);
+    setListItem(item);
+  };
 
   useEffect(() => {
     axios.get(apiUrl)
       .then((res) => {
-        console.log(res.data);
+        console.log("the data",res.data);
 
         setData(res.data[dataKey]);
-        setKeys(res.data.keys);
+        setKeys(res.data.key);
+        setKeysDisp(res.data.keyDisp);
         
         // Pass data to parent component if callback provided
         if (onDataLoad) {
@@ -32,7 +40,7 @@ function DisplayTableKoboStu({ apiUrl, dataKey, title, onDataLoad }) {
         <table border="1" cellPadding="10" cellSpacing="0">
           <thead>
             <tr>
-              {keys.map((key) => (
+              {keyDisp.map((key) => (
                 <th key={key}>{key}</th>
               ))}
             </tr>
@@ -40,8 +48,8 @@ function DisplayTableKoboStu({ apiUrl, dataKey, title, onDataLoad }) {
 
           <tbody>
             {data.map((item) => (
-              <tr key={item.id}>
-                {keys.map((key) => (
+              <tr key={item.id} onClick={() => showDetails(item)} >
+                {keyDisp.map((key) => (
                   <td key={key}>
                     {item[key]}
                   </td>
@@ -51,6 +59,31 @@ function DisplayTableKoboStu({ apiUrl, dataKey, title, onDataLoad }) {
           </tbody>
         </table>
       )}
+      
+      {list_item && (
+            <div className="home-list-detail-show">
+              <div className="detail-header">
+                <h2>Details for ID: {list_item.id}</h2>
+                <button
+                      onClick={() => setListItem(null)}
+                      className="exit-btn"
+                      title="Exit Display"
+                    >
+                      ✕
+                </button>
+              </div>
+                <table border="1" cellPadding="10" className = "home-list-detail-table">
+                  <tbody>
+                    {Object.entries(list_item).map(([key, value]) => (
+                        <tr key={key} className="detail-row">
+                          <td className="detail-key">{key}</td>
+                          <td className="detail-value">{value || "—"}</td>
+                        </tr>
+                    ))}
+                  </tbody>
+                </table>
+            </div>
+          )}
     </div>
   );
 }
